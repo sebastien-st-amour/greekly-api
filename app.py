@@ -1,26 +1,18 @@
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from flask_migrate import Migrate
+import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sqlite.db'
+app.config.from_object(os.environ['APP_SETTINGS'])
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 
-class GreeklyModel(db.Model):
-    __abstract__ = True
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+migrate = Migrate(app, db)
 
-class Stocks(GreeklyModel):
-    __tablename__ = 'stocks'
-    id = db.Column(db.Integer, primary_key=True)
-    ticker = db.Column(db.String(5), unique=True)
-    description = db.Column(db.String(70))
-    exchange = db.Column(db.String(10))
-    broker_id = db.Column(db.Integer, unique=True)
+from models import Stocks
 
-    def __repr__(self):
-        return f'Stocks(ticker={self.ticker}, description={self.description})'
 
 @app.route('/stocks', methods=['POST', 'GET'])
 def stocks():
