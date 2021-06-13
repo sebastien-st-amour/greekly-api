@@ -56,4 +56,4 @@ class OptionsQuotes(GreeklyModel):
         nullable=False)
 
     def __repr__(self):
-        return f'Stocks(ticker={self.ticker}, description={self.description})'
+        return f'OptionsQuotes(symbol={self.symbol})'
