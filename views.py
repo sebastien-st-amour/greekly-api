@@ -158,4 +158,4 @@ class OptionsQuotesAPI(MethodView):
         db.session.add(option)
         db.session.commit()
 
-        return jsonify(OptionsQuotesSchema().dump(OptionsQuotes.query.filter_by(broker_id=request_obj['broker_id']).first()))
+        return OptionsQuotesSchema().dump(OptionsQuotes.query.filter_by(broker_id=request_obj['broker_id']).first())
