@@ -1,9 +1,11 @@
+from os import O_NONBLOCK
 from app import db
 from flask import request, jsonify
 from flask.views import MethodView
-from models import Stocks
-from serializers import StocksSchema
+from models import Stocks, OptionsQuotes
+from serializers import StocksSchema, OptionsQuotesSchema
 from exceptions import InvalidUsage
+from datetime import datetime
 
 class StocksAPI(MethodView):
 
@@ -58,3 +60,102 @@ class StocksAPI(MethodView):
         db.session.commit()
 
         return StocksSchema().dump(Stocks.query.filter_by(ticker=request_obj['ticker']).first())
+
+
+class OptionsQuotesAPI(MethodView):
+
+    def get(self):
+
+        res = OptionsQuotes.query.all()
+        res_serialized = OptionsQuotesSchema().dump(res, many=True)
+
+        return jsonify(res_serialized)
+    
+    def post(self):
+        if not request.json:
+                raise InvalidUsage("No input provided")
+        
+        request_obj = request.get_json()
+        
+        if not 'stock_id' in request_obj:
+            raise InvalidUsage("Underlying stock ID is required")
+        
+        if not 'symbol' in request_obj:
+            raise InvalidUsage("Contract identifier is required (e.g. AMZN23Jul21P3360.00)")
+
+        if not 'broker_id' in request_obj:
+            raise InvalidUsage("Broker option ID is required")
+
+        symbol = request_obj['symbol']
+        broker_id = request_obj['broker_id']
+        stock = Stocks.query.filter_by(broker_id=request_obj['stock_id']).first()
+        ticker = stock.ticker
+
+        bid_price = request_obj['bid_price']
+        bid_size = request_obj['bid_size']
+        ask_price = request_obj['ask_price']
+        ask_size = request_obj['ask_size']
+        last_trade_price_tr_hrs = request_obj['last_trade_price_tr_hrs']
+        last_trade_price = request_obj['last_trade_price']
+        last_trade_size = request_obj['last_trade_size']
+        last_trade_tick = request_obj['last_trade_tick']
+        last_trade_time = request_obj['last_trade_time']
+        volume = request_obj['volume']
+        open_price = request_obj['open_price']
+        high_price = request_obj['high_price']
+        low_price = request_obj['low_price']
+        volatility = request_obj['volatility']
+        delta = request_obj['delta']
+        gamma = request_obj['gamma']
+        theta = request_obj['theta']
+        vega = request_obj['vega']
+        rho = request_obj['rho']
+        open_interest = request_obj['open_interest']
+        delay = request_obj['delay']
+        is_halted = request_obj['is_halted']
+        vwap = request_obj['vwap']
+
+
+        
+        # exp_day = int(symbol[len(ticker):len(ticker)+2])
+        # exp_month = symbol[len(ticker)+2:len(ticker)+5]
+        # exp_year = int(symbol[len(ticker)+5:len(ticker)+7])
+
+        option_type = symbol[len(ticker)+7]
+
+        trade_date = last_trade_time[:10].split('-')
+        
+        option = OptionsQuotes(
+            symbol=symbol,
+            stock_id=stock.id,
+            broker_id=broker_id,
+            type=option_type,
+            bid_price =bid_price,
+            bid_size = bid_size,
+            ask_price = ask_price,
+            ask_size = ask_size,
+            last_trade_price_tr_hrs = last_trade_price_tr_hrs,
+            last_trade_price = last_trade_price,
+            last_trade_size = last_trade_size,
+            last_trade_tick = last_trade_tick,
+            last_trade_time = datetime(int(trade_date[0]), int(trade_date[1]), int(trade_date[2])),
+            volume = volume,
+            open_price = open_price,
+            high_price = high_price,
+            low_price = low_price,
+            volatility = volatility,
+            delta = delta,
+            gamma = gamma,
+            theta = theta,
+            vega = vega,
+            rho = rho,
+            open_interest = open_interest,
+            delay = delay,
+            is_halted = is_halted,
+            vwap = vwap
+        )
+
+        db.session.add(option)
+        db.session.commit()
+
+        return OptionsQuotesSchema().dump(OptionsQuotes.query.filter_by(broker_id=request_obj['broker_id']).first())
