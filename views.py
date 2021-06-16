@@ -65,8 +65,20 @@ class OptionsQuotesAPI(MethodView):
 
     def get(self):
 
-        res = OptionsQuotes.query.all()
-        res_serialized = OptionsQuotesSchema().dump(res, many=True)
+        type = request.args.get('type')
+        max_theta = request.args.get('max_theta')
+        min_theta = request.args.get('min_theta')
+
+        res = OptionsQuotes.query
+
+        if type:
+            res = res.filter_by(type = type)
+        if max_theta:
+            res = res.filter(OptionsQuotes.theta <= max_theta)
+        if min_theta:
+            res = res.filter(OptionsQuotes.theta >= min_theta)
+
+        res_serialized = OptionsQuotesSchema().dump(res.all(), many=True)
 
         return jsonify(res_serialized)
     

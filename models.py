@@ -14,6 +14,7 @@ class Stocks(GreeklyModel):
     description = db.Column(db.String(70))
     exchange = db.Column(db.String(10))
     broker_id = db.Column(db.Integer, unique=True)
+    options = db.relationship('OptionsQuotes', backref='stocks', lazy=True)
 
     def __repr__(self):
         return f'Stocks(ticker={self.ticker}, description={self.description})'
