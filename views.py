@@ -1,4 +1,3 @@
-from os import O_NONBLOCK
 from app import db
 from flask import request, jsonify
 from flask.views import MethodView
@@ -77,8 +76,8 @@ class OptionsQuotesAPI(MethodView):
         
         request_obj = request.get_json()
         
-        if not 'stock_id' in request_obj:
-            raise InvalidUsage("Underlying stock ID is required")
+        if not 'broker_stock_id' in request_obj:
+            raise InvalidUsage("Underlying broker stock ID is required")
         
         if not 'symbol' in request_obj:
             raise InvalidUsage("Contract identifier is required (e.g. AMZN23Jul21P3360.00)")
@@ -88,7 +87,7 @@ class OptionsQuotesAPI(MethodView):
 
         symbol = request_obj['symbol']
         broker_id = request_obj['broker_id']
-        stock = Stocks.query.filter_by(broker_id=request_obj['stock_id']).first()
+        stock = Stocks.query.filter_by(broker_id=request_obj['broker_stock_id']).first()
         ticker = stock.ticker
 
         bid_price = request_obj['bid_price']
@@ -114,12 +113,6 @@ class OptionsQuotesAPI(MethodView):
         delay = request_obj['delay']
         is_halted = request_obj['is_halted']
         vwap = request_obj['vwap']
-
-
-        
-        # exp_day = int(symbol[len(ticker):len(ticker)+2])
-        # exp_month = symbol[len(ticker)+2:len(ticker)+5]
-        # exp_year = int(symbol[len(ticker)+5:len(ticker)+7])
 
         option_type = symbol[len(ticker)+7]
 
