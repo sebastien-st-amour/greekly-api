@@ -126,7 +126,9 @@ class OptionsQuotesAPI(MethodView):
         is_halted = request_obj['is_halted']
         vwap = request_obj['vwap']
 
-        option_type = symbol[len(ticker)+7]
+        offset = 7 if symbol[len(ticker)+1].isnumeric() else 6
+
+        option_type = symbol[len(ticker)+offset]
 
         trade_date = last_trade_time[:10].split('-')
         
