@@ -47,12 +47,12 @@ for quote in quotes:
 
     if data['broker_stock_id'] != 0:
 
-        # res = requests.request(
-        #     'POST', 
-        #     f'{base_url}/options_quotes',
-        #     headers=headers,
-        #     data=json.dumps(data))
-        count+=1
+        res = requests.request(
+            'POST', 
+            f'{base_url}/options_quotes',
+            headers=headers,
+            data=json.dumps(data))
+        # count+=1
         # print(res.text)
         # print(res.text)
-print(count)
+# print(count)
