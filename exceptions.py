@@ -1,5 +1,3 @@
-from flask import jsonify
-from app import app
 
 class InvalidUsage(Exception):
     status_code = 400
@@ -15,9 +13,3 @@ class InvalidUsage(Exception):
         rv = dict(self.payload or ())
         rv['message'] = self.message
         return rv
-
-@app.errorhandler(InvalidUsage)
-def handle_invalid_usage(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response

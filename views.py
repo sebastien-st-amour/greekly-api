@@ -1,7 +1,6 @@
-from app import db
 from flask import request, jsonify
 from flask.views import MethodView
-from models import Stocks, OptionsQuotes
+from models import db, Stocks, OptionsQuotes
 from serializers import StocksSchema, OptionsQuotesSchema
 from exceptions import InvalidUsage
 from datetime import datetime
