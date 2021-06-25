@@ -1,8 +1,6 @@
 
-from flask_marshmallow import Marshmallow
+from app import ma
 from models import Stocks, OptionsQuotes
-
-ma = Marshmallow()
 
 class StocksSchema(ma.SQLAlchemyAutoSchema):
     class Meta:

@@ -1,17 +1,22 @@
 from flask import Flask, jsonify
+from flask_marshmallow import Marshmallow
+from flask_sqlalchemy import SQLAlchemy
 from encoders import GreeklyJSONEncoder
 
-def create_app(config):
+db = SQLAlchemy()
+ma = Marshmallow()
+
+def create_app(config = None):
     app = Flask(__name__)
     app.json_encoder = GreeklyJSONEncoder
     app.config.from_object(config)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     from views import StocksAPI, OptionsQuotesAPI
-    from models import db
     from exceptions import InvalidUsage
     db.init_app(app)
-
+    ma.init_app(app)
+    
     @app.errorhandler(InvalidUsage)
     def handle_invalid_usage(error):
         response = jsonify(error.to_dict())
