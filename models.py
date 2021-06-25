@@ -1,8 +1,6 @@
-from flask_sqlalchemy import SQLAlchemy
+from app import db
 from enums import OptionTypes
 from datetime import datetime
-
-db = SQLAlchemy()
 
 class GreeklyModel(db.Model):
     __abstract__ = True
