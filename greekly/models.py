@@ -1,5 +1,5 @@
-from app import db
-from enums import OptionTypes
+from . import db
+from .enums import OptionTypes
 from datetime import datetime
 
 class GreeklyModel(db.Model):

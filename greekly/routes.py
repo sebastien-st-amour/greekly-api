@@ -1,14 +1,21 @@
-from flask import request, jsonify
-from flask.views import MethodView
-from app import db
-from models import Stocks, OptionsQuotes
-from serializers import StocksSchema, OptionsQuotesSchema
-from exceptions import InvalidUsage
+from flask import request, jsonify, current_app as app
+from .serializers import StocksSchema, OptionsQuotesSchema
+from .models import Stocks, OptionsQuotes
+from .exceptions import InvalidUsage
 from datetime import datetime
+from . import db
 
-class StocksAPI(MethodView):
+@app.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
 
-    def get(self):
+@app.route('/stocks', methods=['GET', 'POST'])
+def stocks():
+
+    if request.method == 'GET':
+
         if len(request.args) > 1:
             raise InvalidUsage("Please specify only one of ['ticker', 'id', 'description', 'exchange', 'broker_id']")
         
@@ -29,9 +36,10 @@ class StocksAPI(MethodView):
         
         res = Stocks.query.all()
         
-        return jsonify(StocksSchema().dump(res, many=True))
+        return jsonify(StocksSchema(many=True).dump(res))
     
-    def post(self):
+    if request.method == 'POST':
+
         if not request.json:
             raise InvalidUsage("No input provided")
         
@@ -60,11 +68,11 @@ class StocksAPI(MethodView):
 
         return StocksSchema().dump(Stocks.query.filter_by(ticker=request_obj['ticker']).first())
 
+@app.route('/options_quotes', methods=['GET', 'POST'])
+def options_quotes():
 
-class OptionsQuotesAPI(MethodView):
-
-    def get(self):
-
+    if request.method == 'GET':
+        
         type = request.args.get('type')
         max_theta = request.args.get('max_theta')
         min_theta = request.args.get('min_theta')
@@ -82,9 +90,10 @@ class OptionsQuotesAPI(MethodView):
 
         return jsonify(res_serialized)
     
-    def post(self):
+    if request.method == 'POST':
+
         if not request.json:
-                raise InvalidUsage("No input provided")
+            raise InvalidUsage("No input provided")
         
         request_obj = request.get_json()
         

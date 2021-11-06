@@ -1,6 +1,6 @@
 
-from app import ma
-from models import Stocks, OptionsQuotes
+from . import ma
+from .models import Stocks, OptionsQuotes
 
 class StocksSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
