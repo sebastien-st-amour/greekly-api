@@ -1,9 +1,11 @@
 from flask import Flask
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 db = SQLAlchemy()
 ma = Marshmallow()
+migrate = Migrate()
 
 def create_app(config = None):
     app = Flask(__name__)
@@ -12,6 +14,7 @@ def create_app(config = None):
 
     ma.init_app(app)
     db.init_app(app)
+    migrate.init_app(app, db)
 
     with app.app_context():
         

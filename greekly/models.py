@@ -3,33 +3,48 @@ from .enums import OptionTypes
 from datetime import datetime
 
 class GreeklyModel(db.Model):
+    
     __abstract__ = True
+    
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 class Stocks(GreeklyModel):
+    
     __tablename__ = 'stocks'
+    
     id = db.Column(db.Integer, primary_key=True)
     ticker = db.Column(db.String(5), unique=True)
     description = db.Column(db.String(70))
     exchange = db.Column(db.String(10))
     broker_id = db.Column(db.Integer, unique=True)
-    options = db.relationship('OptionsQuotes', backref='stocks', lazy=True)
+    options = db.relationship('OptionContracts', backref='stocks', lazy=True)
 
     def __repr__(self):
         return f'Stocks(ticker={self.ticker}, description={self.description})'
 
-class OptionsQuotes(GreeklyModel):
+class OptionContracts(GreeklyModel):
 
-    OPTION_TYPES = [
-        ('C', 'Call'),
-        ('P', 'Put')
-    ]
-    __tablename__ = 'options_quotes'
+    __tablename__ = 'option_contracts'
+
+
     id = db.Column(db.Integer, primary_key=True)
     symbol = db.Column(db.String(30), unique=True)
     type = db.Column(db.Enum(OptionTypes))
     broker_id = db.Column(db.Integer, unique=True)
+    expiration_date = db.Column(db.DateTime)
+    strike_price = db.Column(db.Numeric(14,2))
+    stock_id = db.Column(db.Integer, db.ForeignKey('stocks.id'))
+    option_contract_prices = db.relationship('OptionContractPrices', backref='option_contracts', lazy=True)
+
+    def __repr__(self):
+        return f'OptionContracts(symbol={self.symbol})'
+
+class OptionContractPrices(GreeklyModel):
+
+    __tablename__ = 'option_contract_prices'
+
+    id = db.Column(db.Integer, primary_key=True)
     bid_price = db.Column(db.Numeric(14,2), nullable=True)
     bid_size = db.Column(db.Integer, default=0)
     ask_price = db.Column(db.Numeric(14,2), nullable=True)
@@ -53,8 +68,7 @@ class OptionsQuotes(GreeklyModel):
     delay = db.Column(db.Integer, default=0)
     is_halted = db.Column(db.Boolean)
     vwap = db.Column(db.Numeric(14,2), nullable=True)
-    stock_id = db.Column(db.Integer, db.ForeignKey('stocks.id'),
-        nullable=False)
+    option_contract_id = db.Column(db.Integer, db.ForeignKey('option_contracts.id'))
 
     def __repr__(self):
-        return f'OptionsQuotes(symbol={self.symbol})'
+        return f'OptionContractPrices(id={self.id}, option_contract_id={self.option_contract_id})'

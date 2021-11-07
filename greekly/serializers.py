@@ -1,13 +1,18 @@
 
 from . import ma
-from .models import Stocks, OptionsQuotes
+from .models import Stocks, OptionContracts, OptionContractPrices
 
 class StocksSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Stocks
         load_instance = True
 
-class OptionsQuotesSchema(ma.SQLAlchemyAutoSchema):
+class OptionContractsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = OptionsQuotes
+        model = OptionContracts
+        load_instance = True
+
+class OptionContractPricesSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = OptionContractPrices
         load_instance = True

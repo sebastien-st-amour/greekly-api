@@ -1,14 +1,17 @@
 # Greekly API
 
+## Create Migration Repository (only run once)
+```
+flask db init
+```
 
 ## Run Migrations
 ```
-flask db init
 flask db migrate -m "Initial migration."
 flask db upgrade
 ```
 
 ## Run app
 ```
-flask run
+python wsgi.py
 ```
