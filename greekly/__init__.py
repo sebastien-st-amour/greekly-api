@@ -12,8 +12,8 @@ def create_app(config = None):
     app.config.from_object(config)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    ma.init_app(app)
     db.init_app(app)
+    ma.init_app(app)
     migrate.init_app(app, db)
 
     with app.app_context():
