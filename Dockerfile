@@ -1,5 +1,7 @@
 FROM python:3.9-slim-buster
 
+EXPOSE 5000
+
 WORKDIR /app
 
 COPY requirements.txt ./
