@@ -26,7 +26,10 @@ stages:
       name: test
       test_commands:
         - ls -al
-        - printenv 
+        - printenv
+      
+      name: prod
+      requires_approval: true
 
       # Optional: flag for manual approval action before deployment.
       # requires_approval: true
