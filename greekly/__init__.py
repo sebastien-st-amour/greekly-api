@@ -15,12 +15,11 @@ def create_app(config = None):
     db.init_app(app)
     ma.init_app(app)
     migrate.init_app(app, db)
-
-    with app.app_context():
         
-        from . import routes
-        from . import encoders
+    from . import routes
+    from . import encoders
 
-        app.json_encoder = encoders.GreeklyEncoder
+    app.register_blueprint(routes.bp)
+    app.json_encoder = encoders.GreeklyEncoder
 
-        return app
+    return app
