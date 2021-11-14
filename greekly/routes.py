@@ -1,21 +1,25 @@
-from flask import request, jsonify, current_app as app
+from flask import request, jsonify, Blueprint
 from .serializers import OptionContractsSchema, StocksSchema
 from .models import OptionContracts, Stocks
 from .exceptions import InvalidUsage
 from datetime import datetime
 from . import db
 
-@app.errorhandler(InvalidUsage)
+
+bp = Blueprint('app_bp', __name__)
+
+
+@bp.errorhandler(InvalidUsage)
 def handle_invalid_usage(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
 
-@app.route('/', methods=['GET'])
+@bp.route('/', methods=['GET'])
 def healthcheck():
     return "Health is good!"
 
-@app.route('/stocks', methods=['GET', 'POST'])
+@bp.route('/stocks', methods=['GET', 'POST'])
 def stocks():
 
     if request.method == 'GET':
@@ -72,7 +76,7 @@ def stocks():
 
         return StocksSchema().dump(Stocks.query.filter_by(ticker=request_obj['ticker']).first())
 
-@app.route('/option_contracts', methods=['GET', 'POST'])
+@bp.route('/option_contracts', methods=['GET', 'POST'])
 def option_contracts():
     
     if request.method == 'GET':
@@ -87,7 +91,7 @@ def option_contracts():
 
         return jsonify(res_serialized)
 
-# @app.route('/option_quotes', methods=['GET', 'POST'])
+# @bp.route('/option_quotes', methods=['GET', 'POST'])
 # def options_quotes():
 
 #     if request.method == 'GET':
