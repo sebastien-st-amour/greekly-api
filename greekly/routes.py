@@ -2,7 +2,9 @@ from flask import request, jsonify, Blueprint
 from .serializers import OptionContractsSchema, StocksSchema
 from .models import OptionContracts, Stocks
 from .exceptions import InvalidUsage
+from .decorators import validate_twilio_request
 from datetime import datetime
+from twilio.twiml.messaging_response import MessagingResponse
 from . import db
 
 
@@ -14,6 +16,22 @@ def handle_invalid_usage(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
+@bp.route('/sms', methods=['POST'])
+@validate_twilio_request
+def sms_reply():
+
+    body = request.values.get('Body', None)
+    """Respond to incoming calls with a simple text message."""
+
+    # Start our TwiML response
+    resp = MessagingResponse()
+
+    # Add a message
+    resp.message(f"Acknowledged this: {body}")
+
+    return str(resp)
+
 
 @bp.route('/', methods=['GET'])
 def healthcheck():
