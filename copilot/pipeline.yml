@@ -29,7 +29,7 @@ stages:
         - wget https://ecs-cli-v2-release.s3.amazonaws.com/copilot-linux-v1.12.0 
         - mv ./copilot-linux-v1.12.0 ./copilot-linux       
         - chmod +x ./copilot-linux        
-        - ./copilot-linux svc exec -c "flask db upgrade" -e test --yes
+        - ./copilot-linux svc exec -c "flask db upgrade" -a greekly-api -n greekly-api -e test --yes
       
     - 
       name: prod
@@ -39,7 +39,7 @@ stages:
         - wget https://ecs-cli-v2-release.s3.amazonaws.com/copilot-linux-v1.12.0 
         - mv ./copilot-linux-v1.12.0 ./copilot-linux       
         - chmod +x ./copilot-linux        
-        - ./copilot-linux svc exec -c "flask db upgrade" -e prod --yes
+        - ./copilot-linux svc exec -c "flask db upgrade" -a greekly-api -n greekly-api -e prod --yes
 
       # Optional: flag for manual approval action before deployment.
       # requires_approval: true
