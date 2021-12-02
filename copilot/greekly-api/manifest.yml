@@ -12,8 +12,7 @@ http:
   # To match all requests you can use the "/" path.
   path: '/'
   # You can specify a custom health check path. The default is "/".
-  # healthcheck:
-  #   path: '/'
+  # healthcheck: '/'
 
 # Configuration for your containers and service.
 image:
@@ -34,8 +33,6 @@ exec: true     # Enable running commands in your container.
 
 #secrets:                      # Pass secrets from AWS Systems Manager (SSM) Parameter Store.
 #  GITHUB_TOKEN: GITHUB_TOKEN  # The key is the name of the environment variable, the value is the name of the SSM parameter.
-secrets:
-  GREEKLY_APP_CONFIG: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/GREEKLY_APP_CONFIG
 
 # You can override any of the values defined above by environment.
 #environments:
