@@ -38,3 +38,10 @@ exec: true     # Enable running commands in your container.
 #environments:
 #  test:
 #    count: 2               # Number of tasks to run for the "test" environment.
+environments:
+  test:
+    variables:
+      GREEKLY_APP_CONFIG: config.StagingConfig
+  prod:
+    variables:
+      GREEKLY_APP_CONFIG: config.ProductionConfig
