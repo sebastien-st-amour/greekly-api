@@ -1,5 +1,5 @@
 
-class InvalidUsage(Exception):
+class GreeklyException(Exception):
     status_code = 400
 
     def __init__(self, message, status_code=None, payload=None):
