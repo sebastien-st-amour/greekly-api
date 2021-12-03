@@ -11,6 +11,7 @@ class Config:
     DB_HOST = GREEKLY_DB_SECRET.get('host')
     DB_PORT = GREEKLY_DB_SECRET.get('port')
     DB_NAME = GREEKLY_DB_SECRET.get('dbname')
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "this-is-the-default-key")
     SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
 
 class ProductionConfig(Config):
