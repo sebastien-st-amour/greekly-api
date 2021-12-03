@@ -1,6 +1,7 @@
 from . import db
 from .enums import OptionTypes
 from datetime import datetime
+from werkzeug.security import check_password_hash
 
 class GreeklyModel(db.Model):
     
@@ -8,6 +9,17 @@ class GreeklyModel(db.Model):
     
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+class Users(GreeklyModel):
+
+    __tablename__ = 'users'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True)
+    password_hash = db.Column(db.String(128))
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 class Stocks(GreeklyModel):
     
