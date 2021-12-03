@@ -98,7 +98,7 @@ def stocks():
         return StocksSchema().dump(Stocks.query.filter_by(ticker=request_obj['ticker']).first())
 
 @bp.route('/option_contracts', methods=['GET'])
-@jwt_required
+@jwt_required()
 def option_contracts():
 
     res = OptionContracts.query
