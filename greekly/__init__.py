@@ -1,3 +1,4 @@
+from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import Flask
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
@@ -13,6 +14,7 @@ jwt = JWTManager()
 
 def create_app(config = None):
     app = Flask(__name__)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)
     app.config.from_object(config)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
