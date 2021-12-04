@@ -2,7 +2,9 @@ from flask import abort, current_app, request
 from functools import wraps
 from twilio.request_validator import RequestValidator
 import os
+import logging
 
+logging.basicConfig(level=logging.INFO)
 '''
 Note: If your Twilio webhook URLs start with https:// instead of http://, 
 your request validator may fail locally when you use Ngrok or in production 
@@ -29,6 +31,13 @@ def validate_twilio_request(f):
             request.url,
             request.form,
             request.headers.get('X-TWILIO-SIGNATURE', ''))
+        
+        twilio_signature = request.headers.get('X-TWILIO-SIGNATURE', '')
+
+        logging.info(f"request url: {request.url}")
+        logging.info(f"request form: {request.form}")
+        logging.info(f"twilio signature: {twilio_signature}")
+
 
 
         # Continue processing the request if it's valid (or if DEBUG is True)
