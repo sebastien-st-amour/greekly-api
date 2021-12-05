@@ -44,6 +44,10 @@ environments:
   test:
     variables:
       GREEKLY_APP_CONFIG: config.StagingConfig
+    http:
+      alias: test-api.greekly.ca
   prod:
     variables:
       GREEKLY_APP_CONFIG: config.ProductionConfig
+    http:
+      alias: api.greekly.ca
