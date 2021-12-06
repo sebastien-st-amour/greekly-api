@@ -1,3 +1,4 @@
+from os import getenv
 from flask import request, jsonify, Blueprint
 from .serializers import OptionContractsSchema, StocksSchema
 from .models import OptionContracts, Stocks, Users
@@ -8,6 +9,8 @@ from twilio.twiml.messaging_response import MessagingResponse
 from werkzeug.security import generate_password_hash
 from flask_jwt_extended import create_access_token, jwt_required
 from . import db
+import boto3
+import json
 
 
 bp = Blueprint('app_bp', __name__)
@@ -29,8 +32,21 @@ def sms_reply():
     # Start our TwiML response
     resp = MessagingResponse()
 
-    # Add a message
-    resp.message(f"Acknowledged this: {body}")
+    # publish message to SNS
+    try: 
+        client = boto3.client('sns', region_name='ca-central-1')
+
+        arns = json.loads(getenv('COPILOT_SNS_TOPIC_ARNS'))
+
+        topic_arn = arns.get("greekly-api-2fa-codes")
+
+        client.publish(TopicArn=topic_arn, 
+                Message=json.dumps({"body": body}))
+        
+        resp.message(f"Published to SNS: {body}")
+    except:
+        
+        resp.message(f"Failed to publish to SNS: {body}")
 
     return str(resp)
 
