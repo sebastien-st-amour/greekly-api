@@ -102,11 +102,10 @@ def stocks():
         if not 'exchange' in request_obj:
             raise GreeklyException("Exchange is required")
 
-        stock = Stocks(
-            ticker=request_obj['ticker'],
-            description=request_obj['description'],
-            broker_id=request_obj['broker_id'],
-            exchange=request_obj['exchange'],)
+        stock = Stocks(ticker=request_obj['ticker'],
+                       description=request_obj['description'],
+                       broker_id=request_obj['broker_id'],
+                       exchange=request_obj['exchange'],)
 
         db.session.add(stock)
         db.session.commit()
