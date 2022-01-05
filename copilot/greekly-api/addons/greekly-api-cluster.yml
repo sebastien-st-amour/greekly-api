@@ -22,7 +22,7 @@ Parameters:
 Mappings:
   greeklyapiclusterEnvScalingConfigurationMap: 
     test:
-      "DBMinCapacity": 2 # AllowedValues: [2, 4, 8, 16, 32, 64, 192, 384]
+      "DBMinCapacity": 1 # AllowedValues: [2, 4, 8, 16, 32, 64, 192, 384]
       "DBMaxCapacity": 8 # AllowedValues: [2, 4, 8, 16, 32, 64, 192, 384]
       
     All:
