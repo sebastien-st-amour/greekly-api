@@ -4,6 +4,11 @@ EXPOSE 5000
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y \
+  vim \
+  postgresql-client \
+  && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
