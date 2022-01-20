@@ -1,0 +1,35 @@
+Parameters:
+  App:
+    Type: String
+    Description: Your application's name.
+  Env:
+    Type: String
+    Description: The environment name your service, job, or workflow is being deployed to.
+  Name:
+    Type: String
+    Description: The name of the service, job, or workflow being deployed.
+Resources:
+  
+  greeklyS3AccessPolicy:
+    Metadata:
+      'aws:copilot:description': 'An IAM ManagedPolicy for your service to access files from S3'
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Grants CRUD access to S3 buckets
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+            Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:PutObject
+              - s3:PutObjectACL
+              - s3:PutObjectTagging
+              - s3:DeleteObject
+              - s3:RestoreObject
+            Resource: "*"
+
+Outputs:
+  greeklyS3tokenDownloadPolicy:
+    Description: "The IAM::ManagedPolicy to attach to the task role"
+    Value: !Ref greeklyS3AccessPolicy
