@@ -11,6 +11,7 @@ from flask_jwt_extended import create_access_token, jwt_required
 from . import db
 import boto3
 import json
+from datetime import datetime
 
 
 bp = Blueprint('app_bp', __name__)
@@ -121,6 +122,86 @@ def option_contracts():
     type = request.args.get('type')
     if type:
         res = res.filter_by(type = type)
+    
+    max_delta = request.args.get('max_delta')
+    if max_delta:
+        res = res.filter(OptionContracts.delta <= float(max_delta))
+
+    min_delta = request.args.get('min_delta')
+    if min_delta:
+        res = res.filter(OptionContracts.delta >= float(min_delta))
+
+    max_theta = request.args.get('max_theta')
+    if max_theta:
+        res = res.filter(OptionContracts.theta <= float(max_theta))
+
+    min_theta = request.args.get('min_theta')
+    if min_theta:
+        res = res.filter(OptionContracts.theta >= float(min_theta))
+
+    max_gamma = request.args.get('max_gamma')
+    if max_gamma:
+        res = res.filter(OptionContracts.gamma <= float(max_gamma))
+
+    min_gamma = request.args.get('min_gamma')
+    if min_gamma:
+        res = res.filter(OptionContracts.gamma >= float(min_gamma))
+    
+    max_rho = request.args.get('max_rho')
+    if max_rho:
+        res = res.filter(OptionContracts.rho <= float(max_rho))
+
+    min_rho = request.args.get('min_rho')
+    if min_rho:
+        res = res.filter(OptionContracts.rho >= float(min_rho))
+    
+    max_vega = request.args.get('max_vega')
+    if max_vega:
+        res = res.filter(OptionContracts.vega <= float(max_vega))
+
+    min_vega = request.args.get('min_vega')
+    if min_vega:
+        res = res.filter(OptionContracts.vega >= float(min_vega))
+
+    max_strike = request.args.get('max_strike')
+    if max_strike:
+        res = res.filter(OptionContracts.strike_price <= float(max_strike))
+
+    min_strike = request.args.get('min_strike')
+    if min_strike:
+        res = res.filter(OptionContracts.strike_price >= float(min_strike))
+
+    max_expiration = request.args.get('max_expiration')
+    if max_expiration:
+        res = res.filter(OptionContracts.expiration_date <= datetime.strptime(max_expiration, '%Y-%m-%d'))
+    
+    min_expiration = request.args.get('min_expiration')
+    if min_expiration:
+        res = res.filter(OptionContracts.expiration_date >= datetime.strptime(min_expiration, '%Y-%m-%d'))
+    
+    max_volatility = request.args.get('max_volatility')
+    if max_volatility:
+        res = res.filter(OptionContracts.volatility <= float(max_volatility))
+
+    min_volatility = request.args.get('min_volatility')
+    if min_volatility:
+        res = res.filter(OptionContracts.volatility >= float(min_volatility))
+
+    max_bid_price = request.args.get('max_bid_price')
+    if max_bid_price:
+        res = res.filter(OptionContracts.bid_price <= float(max_bid_price))
+
+    min_bid_price = request.args.get('min_bid_price')
+    if min_bid_price:
+        res = res.filter(OptionContracts.bid_price >= float(min_bid_price))
+
+    max_ask_price = request.args.get('max_ask_price')
+    if max_ask_price:
+        res = res.filter(OptionContracts.ask_price <= float(max_ask_price))
+
+    min_ask_price = request.args.get('min_ask_price')
+    if min_ask_price:
+        res = res.filter(OptionContracts.ask_price >= float(min_ask_price))
 
     res_serialized = OptionContractsSchema().dump(res.all(), many=True)
 
