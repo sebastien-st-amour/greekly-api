@@ -1,0 +1,47 @@
+# The manifest for the "fetch-api-token" job.
+# Read the full specification for the "Scheduled Job" type at:
+#  https://aws.github.io/copilot-cli/docs/manifest/scheduled-job/
+
+# Your job name will be used in naming your resources like log groups, ECS Tasks, etc.
+name: fetch-api-token
+type: Scheduled Job
+
+# Trigger for your task.
+
+image:
+  build: fetch_questrade_api_token/Dockerfile
+  depends_on:
+    chrome: healthy
+
+sidecars:
+  chrome:
+    image: selenium/standalone-chrome:3.141.59-20210607
+    port: 4444
+    healthcheck:
+      command: ["CMD-SHELL", "curl -f http://127.0.0.1:4444/wd/hub/static/resource/hub.html || exit 1"]
+      interval: 10s
+      retries: 2
+      timeout: 5s
+      start_period: 0s
+
+cpu: 256       # Number of CPU units for the task.
+memory: 512    # Amount of memory in MiB used by the task.
+
+secrets:
+  QUESTRADE_USERNAME: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/QUESTRADE_USERNAME
+  QUESTRADE_PASSWORD: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/QUESTRADE_PASSWORD
+  AWS_SQS_QUEUE_URI: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/AWS_SQS_QUEUE_URI
+  AWS_S3_BUCKET: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/AWS_S3_BUCKET
+environments:
+  test:
+    variables:
+      CHROME_URL: http://127.0.0.1:4444/wd/hub
+      LOG_LEVEL: debug
+    on:
+      schedule: "0 21 * * SAT"
+  prod:
+    variables:
+      CHROME_URL: http://127.0.0.1:4444/wd/hub
+      LOG_LEVEL: info
+    on:
+      schedule: "0 21 * * SUN"

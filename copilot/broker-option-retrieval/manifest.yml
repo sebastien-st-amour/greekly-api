@@ -1,0 +1,54 @@
+# The manifest for the "broker-option-retrieval" service.
+# Read the full specification for the "Worker Service" type at:
+# https://aws.github.io/copilot-cli/docs/manifest/worker-service/
+
+# Your service name will be used in naming your resources like log groups, ECS services, etc.
+name: broker-option-retrieval
+type: Worker Service
+
+# Configuration for your containers and service.
+image:
+  # Docker build arguments.
+  build: broker_option_retrieval/Dockerfile
+
+cpu: 256       # Number of CPU units for the task.
+memory: 512    # Amount of memory in MiB used by the task.
+exec: true     # Enable running commands in your container.
+
+# You can register to topics from other services.
+# The events can be be received from an SQS queue via the env var $COPILOT_QUEUE_URI.
+subscribe:
+  topics: 
+    - name: broker-option-ids
+      service: initial-load
+
+publish:
+  topics:
+    - name: broker-option-responses
+
+storage:
+  volumes:
+    questrade:
+      efs: true
+      path: /home/questrade
+      read_only: false
+# Optional fields for more advanced use-cases.
+#
+variables:                    # Pass environment variables as key value pairs.
+  TOKEN_PATH: /home/questrade/.questrade.json
+
+#secrets:                      # Pass secrets from AWS Systems Manager (SSM) Parameter Store.
+#  GITHUB_TOKEN: GITHUB_TOKEN  # The key is the name of the environment variable, the value is the name of the SSM parameter.
+
+# You can override any of the values defined above by environment.
+environments:
+  test:
+    count:
+      spot: 1
+    variables:
+      LOG_LEVEL: debug
+  prod:
+    count:
+      spot: 1
+    variables:
+      LOG_LEVEL: info

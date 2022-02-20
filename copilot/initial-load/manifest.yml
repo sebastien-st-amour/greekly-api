@@ -1,0 +1,61 @@
+# The manifest for the "initial-load" job.
+# Read the full specification for the "Scheduled Job" type at:
+#  https://aws.github.io/copilot-cli/docs/manifest/scheduled-job/
+
+name: initial-load
+type: Scheduled Job
+
+# Trigger for your task.
+
+
+image:
+  build: initial_load/Dockerfile
+
+cpu: 256       # Number of CPU units for the task.
+memory: 512    # Amount of memory in MiB used by the task.
+
+publish:
+  topics:
+    - name: broker-option-ids
+
+secrets:
+  GREEKLY_DB_URI: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/GREEKLY_DB_URI
+  AWS_S3_BUCKET: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/AWS_S3_BUCKET
+
+environments:
+  test:
+    on:
+      # Run Feb 31st at 5am (this would never run)
+      schedule: "0 5 31 2 *"
+      # schedule: "*/15 0-8 * * MON-FRI"
+    variables:
+      TOKEN_PATH: /home/questrade/.questrade.json
+      LOG_LEVEL: debug
+    storage:
+      volumes:
+        questrade:
+          path: /home/questrade
+          read_only: false
+          efs:
+            id: fs-02f036efe623c1138
+            auth:
+              iam: true
+              access_point_id: fsap-0982a9e56c7b1aadc
+  prod:
+    on:
+      # Run Feb 31st at 5am (this would never run)
+      schedule: "0 5 31 2 *"
+      # schedule: "*/15 14-22 * * MON-FRI"
+    variables:
+      TOKEN_PATH: /home/questrade/.questrade.json
+      LOG_LEVEL: info
+    storage:
+      volumes:
+        questrade:
+          path: /home/questrade
+          read_only: false
+          efs:
+            id: fs-0849db2b11035459b
+            auth:
+              iam: true
+              access_point_id: fsap-09199d0ff90970e63

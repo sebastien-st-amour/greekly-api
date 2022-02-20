@@ -1,0 +1,47 @@
+Parameters:
+  App:
+    Type: String
+    Description: Your application's name.
+  Env:
+    Type: String
+    Description: The environment name your service, job, or workflow is being deployed to.
+  Name:
+    Type: String
+    Description: The name of the service, job, or workflow being deployed.
+Resources:
+  
+  greeklyGrantAccessEFS:
+    Metadata:
+      'aws:copilot:description': 'An IAM ManagedPolicy for your service to mount and write to EFS.'
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Grants write and mount access to EFS
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+            Effect: Allow
+            Action:
+              - 'elasticfilesystem:ClientMount'
+              - 'elasticfilesystem:ClientWrite'
+            Resource: "*"
+  greeklyS3tokenDownloadPolicy:
+    Metadata:
+      'aws:copilot:description': 'An IAM ManagedPolicy for your service to download files from S3'
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Grants read access to the S3 bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+            Effect: Allow
+            Action:
+              - s3:GetObject
+            Resource: "*"
+
+Outputs:
+  greeklyGrantAccessEFS:
+    Description: "The IAM::ManagedPolicy to attach to the task role"
+    Value: !Ref greeklyGrantAccessEFS
+  greeklyS3tokenDownloadPolicy:
+    Description: "The IAM::ManagedPolicy to attach to the task role"
+    Value: !Ref greeklyS3tokenDownloadPolicy

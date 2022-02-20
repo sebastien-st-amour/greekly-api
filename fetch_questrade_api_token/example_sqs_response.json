@@ -1,0 +1,33 @@
+{
+    "Messages": [
+        {
+            "MessageId": "gibberish",
+            "ReceiptHandle": "gibberish",
+            "MD5OfBody": "gibberish",
+            "Body": {
+                "Type": "Notification",
+                "MessageId": "gibberish",
+                "TopicArn": "arn:aws:sns:region:awsAccountID:appName-envName-serviceName-topicName",
+                "Message": {
+                    "body": "hello how is it going?"
+                },
+                "Timestamp": "2021-12-06T01:04:00.077Z",
+                "SignatureVersion": "1",
+                "Signature": "gibberish",
+                "SigningCertURL": "https://sns.region.amazonaws.com/SimpleNotificationService-gibberish.pem",
+                "UnsubscribeURL": "https://sns.region.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:region:awsAccountID:appName-envName-serviceName-topicName:gibberish"
+            }
+        }
+    ],
+    "ResponseMetadata": {
+        "RequestId": "gibberish",
+        "HTTPStatusCode": 200,
+        "HTTPHeaders": {
+            "x-amzn-requestid": "gibberish",
+            "date": "Mon, 06 Dec 2021 01:12:09 GMT",
+            "content-type": "text/xml",
+            "content-length": "2082"
+        },
+        "RetryAttempts": 0
+    }
+}

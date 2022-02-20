@@ -1,0 +1,48 @@
+Parameters:
+  App:
+    Type: String
+    Description: Your application's name.
+  Env:
+    Type: String
+    Description: The environment name your service, job, or workflow is being deployed to.
+  Name:
+    Type: String
+    Description: The name of the service, job, or workflow being deployed.
+Resources:
+
+  greeklySQSaccessPolicy:
+    Metadata:
+      'aws:copilot:description': 'An IAM ManagedPolicy for your service to access the SQS queue'
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Grants read access to the SQS queues
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+            Effect: Allow
+            Action:
+              - sqs:ReceiveMessage
+              - sqs:DeleteMessage
+            Resource: "*"
+  
+  greeklyS3tokenUploadPolicy:
+    Metadata:
+      'aws:copilot:description': 'An IAM ManagedPolicy for your service to upload files to S3'
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Grants write access to the S3 bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+            Effect: Allow
+            Action:
+              - s3:PutObject
+            Resource: "*"
+
+Outputs:
+  greeklySQSaccessPolicy:
+    Description: "The IAM::ManagedPolicy to attach to the task role"
+    Value: !Ref greeklySQSaccessPolicy
+  greeklyS3tokenUploadPolicy:
+    Description: "The IAM::ManagedPolicy to attach to the task role"
+    Value: !Ref greeklyS3tokenUploadPolicy
