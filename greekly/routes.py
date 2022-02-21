@@ -119,6 +119,8 @@ def option_contracts():
 
     res = OptionContracts.query
 
+    page = request.args.get('page', 1, type=int)
+
     type = request.args.get('type')
     if type:
         res = res.filter_by(type = type)
@@ -202,11 +204,19 @@ def option_contracts():
     min_ask_price = request.args.get('min_ask_price')
     if min_ask_price:
         res = res.filter(OptionContracts.ask_price >= float(min_ask_price))
+    
+    response = res.paginate(page, 10, False)
 
-    res_serialized = OptionContractsSchema().dump(res.all(), many=True)
+    res_serialized = OptionContractsSchema().dump(response.items, many=True)
 
-    return jsonify(res_serialized)
+    data = {
+        'total_pages': response.pages,
+        'current_page': response.page,
+        'total_items': response.total,
+        'items': res_serialized
+    }
 
+    return jsonify(data)
 
 # @bp.route('/register', methods=['POST'])
 # def register():
