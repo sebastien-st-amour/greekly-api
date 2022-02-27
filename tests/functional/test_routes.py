@@ -18,12 +18,33 @@ def login(client, email, password):
     
     return client.post('/login', data=json.dumps({'email': email, 'password': password}), headers=headers)
 
-def test_login(client):
+def test_login_success(client):
     
     response = login(client, 'greekly@test.com', 'greeklyTest123')
 
     assert response.status_code == 200
     assert "access_token" in response.json
+
+def test_login_email_not_found(client):
+    
+    response = login(client, 'greeklyNotFound@test.com', 'greeklyTest123')
+
+    assert response.status_code == 404
+    assert response.json['message'] == 'User not found'
+
+def test_login_invalid_password(client):
+    
+    response = login(client, 'greekly@test.com', 'incorrectPassword123')
+
+    assert response.status_code == 401
+    assert response.json['message'] == 'Invalid password'
+
+def test_unapproved_login(client):
+    
+    login_response = login(client, 'notApproved@test.com', 'greeklyTest123')
+
+    assert login_response.status_code == 401
+    assert login_response.json['message'] == 'User is not approved to make requests'
 
 def test_create_stock(client):
 

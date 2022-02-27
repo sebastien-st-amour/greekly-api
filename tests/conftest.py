@@ -16,10 +16,12 @@ def client():
             db.create_all()
 
             # add test data to database
-            greekly_user = Users(email='greekly@test.com', password_hash=generate_password_hash('greeklyTest123'))
+            greekly_user = Users(email='greekly@test.com', password_hash=generate_password_hash('greeklyTest123'), is_approved=True)
+            not_approved_user = Users(email='notApproved@test.com', password_hash=generate_password_hash('greeklyTest123'))
             greekly_stock = Stocks(ticker='GREEK', description='Greekly Inc.', exchange='NASDAQ', broker_id=1234)
 
             db.session.add(greekly_user)
+            db.session.add(not_approved_user)
             db.session.add(greekly_stock)
             db.session.commit()
             

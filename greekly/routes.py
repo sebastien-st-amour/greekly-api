@@ -252,11 +252,14 @@ def login():
         raise GreeklyException("Password is missing", status_code=400)
     
     user = Users.query.filter_by(email=email).first()
-    if not user: raise GreeklyException("User not found", status_code=404)
-    
+    if not user:
+        raise GreeklyException("User not found", status_code=404)
 
     if not user.check_password(password):
         raise GreeklyException("Invalid password", status_code=401)
+    
+    if not user.is_approved:
+        raise GreeklyException("User is not approved to make requests", status_code=401)
     
     access_token = create_access_token(identity={"email": email})
     return {"access_token": access_token}, 200
