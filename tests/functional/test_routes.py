@@ -16,7 +16,7 @@ def test_health(client):
 
 def login(client, email, password):
     
-    return client.post('/login', data=json.dumps({'email': email, 'password': password}), headers=headers)
+    return client.post('/api/login', data=json.dumps({'email': email, 'password': password}), headers=headers)
 
 def test_login_success(client):
     
@@ -58,7 +58,7 @@ def test_create_stock(client):
     login_response = login(client, 'greekly@test.com', 'greeklyTest123')
     access_token = login_response.json['access_token']
     headers['Authorization'] = 'Bearer ' + access_token
-    response = client.post('/stocks', data=json.dumps(test_stock), headers=headers)
+    response = client.post('/api/stocks', data=json.dumps(test_stock), headers=headers)
 
     assert response.status_code == 200
     assert response.json['broker_id'] == 16142
@@ -70,7 +70,7 @@ def test_get_stocks(client):
     access_token = login_response.json['access_token']
     headers['Authorization'] = 'Bearer ' + access_token
     
-    response = client.get('/stocks', headers=headers)
+    response = client.get('/api/stocks', headers=headers)
 
     assert response.status_code == 200
     assert len(response.json) == 1
@@ -78,7 +78,7 @@ def test_get_stocks(client):
 
 def test_unauthenticated_get_stocks(client):
     
-    response = client.get('/stocks')
+    response = client.get('/api/stocks')
 
     assert response.status_code == 401
     assert response.json['msg'] == 'Missing Authorization Header'

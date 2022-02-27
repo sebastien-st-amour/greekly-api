@@ -56,7 +56,7 @@ def sms_reply():
 def healthcheck():
     return "Health is good!"
 
-@bp.route('/stocks', methods=['GET', 'POST'])
+@bp.route('/api/stocks', methods=['GET', 'POST'])
 @jwt_required()
 def stocks():
 
@@ -113,7 +113,7 @@ def stocks():
 
         return StocksSchema().dump(Stocks.query.filter_by(ticker=request_obj['ticker']).first())
 
-@bp.route('/option_contracts', methods=['GET'])
+@bp.route('/api/option_contracts', methods=['GET'])
 @jwt_required()
 def option_contracts():
 
@@ -218,29 +218,31 @@ def option_contracts():
 
     return jsonify(data)
 
-# @bp.route('/register', methods=['POST'])
-# def register():
+@bp.route('/api/register', methods=['POST'])
+def register():
 
-#     try:
-#         email = request.json.get('email', None)
-#         password = request.json.get('password', None)
+    try:
+        email = request.json.get('email', None)
+        password = request.json.get('password', None)
         
-#         if not email: raise GreeklyException("Email is required", status_code=400)
-#         if not password: raise GreeklyException("Password is required", status_code=400)
+        if not email:
+            raise GreeklyException("Email is required", status_code=400)
+        if not password:
+            raise GreeklyException("Password is required", status_code=400)
         
-#         hashed = generate_password_hash(password)
+        hashed = generate_password_hash(password)
 
-#         user = Users(email=email, password_hash=hashed)
-#         db.session.add(user)
-#         db.session.commit()
+        user = Users(email=email, password_hash=hashed)
+        db.session.add(user)
+        db.session.commit()
 
-#         access_token = create_access_token(identity={"email": email})
-#         return {"access_token": access_token}, 200
-#     except IntegrityError:
-#         db.session.rollback()
-#         raise GreeklyException("User already exists", status_code=400)
+        access_token = create_access_token(identity={"email": email})
+        return {"access_token": access_token}, 200
+    except IntegrityError:
+        db.session.rollback()
+        raise GreeklyException("User already exists", status_code=400)
 
-@bp.route('/login', methods=['POST'])
+@bp.route('/api/login', methods=['POST'])
 def login():
 
     email = request.json.get('email', None)
