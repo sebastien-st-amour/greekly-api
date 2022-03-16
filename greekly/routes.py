@@ -125,6 +125,10 @@ def option_contracts():
     if type:
         res = res.filter_by(type = type)
     
+    underlying = request.args.get('underlying')
+    if underlying:
+        res = res.filter(OptionContracts.stock_id.in_(underlying.split(',')))
+    
     max_delta = request.args.get('max_delta')
     if max_delta:
         res = res.filter(OptionContracts.delta <= float(max_delta))
