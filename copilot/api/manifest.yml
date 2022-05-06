@@ -29,7 +29,13 @@ exec: true     # Enable running commands in your container.
 #secrets:                      # Pass secrets from AWS Systems Manager (SSM) Parameter Store.
 #  GITHUB_TOKEN: GITHUB_TOKEN  # The key is the name of the environment variable, the value is the name of the SSM parameter.
 
+secrets:
+  JWT_SECRET_KEY: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/JWT_SECRET_KEY
+
 environments:
   test:
     variables:
       GREEKLY_APP_CONFIG: config.StagingConfig
+  prod:
+    variables:
+      GREEKLY_APP_CONFIG: config.ProductionConfig

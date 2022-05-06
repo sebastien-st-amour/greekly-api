@@ -1,0 +1,115 @@
+Parameters:
+  App:
+    Type: String
+    Description: Your application's name.
+  Env:
+    Type: String
+    Description: The environment name your service, job, or workflow is being deployed to.
+  Name:
+    Type: String
+    Description: The name of the service, job, or workflow being deployed.
+  greeklyapiDBName:
+    Type: String
+    Description: The name of the initial database to be created in the DB cluster.
+    Default: greekly
+
+Mappings:
+  Rds:
+    InstanceClass:
+      test: "db.t3.micro"
+      prod: "db.t3.micro"
+    Storage:
+      test: 10
+      prod: 10
+
+Resources:
+
+  greeklyapiDBSubnetGroup:
+    Type: 'AWS::RDS::DBSubnetGroup'
+    Properties:
+      DBSubnetGroupDescription: Group of Copilot private subnets for Postgres.
+      SubnetIds:
+        !Split [',', { 'Fn::ImportValue': !Sub '${App}-${Env}-PrivateSubnets' }]
+
+  greeklyapiSecurityGroup:
+    Metadata:
+      'aws:copilot:description': 'A security group for your workload to access the DB instance'
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: !Sub 'The Security Group for ${Name} to access DB instance'
+      VpcId:
+        Fn::ImportValue:
+          !Sub '${App}-${Env}-VpcId'
+      Tags:
+        - Key: Name
+          Value: !Sub 'copilot-${App}-${Env}-${Name}-Postgres'
+  
+  greeklyapiDBSecurityGroup:
+    Metadata:
+      'aws:copilot:description': 'A security group for your DB instance'
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: The Security Group for the database.
+      SecurityGroupIngress:
+        - ToPort: 5432
+          FromPort: 5432
+          IpProtocol: tcp
+          Description: !Sub 'From the Postgres Security Group of the workload ${Name}.'
+          SourceSecurityGroupId: !Ref greeklyapiSecurityGroup
+      VpcId:
+        Fn::ImportValue:
+          !Sub '${App}-${Env}-VpcId'
+
+  greeklyapiRDSSecret:
+    Metadata:
+      'aws:copilot:description': 'A Secrets Manager secret to store your DB credentials'
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: !Sub Postgres main user secret for ${AWS::StackName}
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "postgres"}'
+        GenerateStringKey: "password"
+        ExcludePunctuation: true
+        IncludeSpace: false
+        PasswordLength: 16
+
+  GreeklyDBInstance:
+    Metadata:
+      'aws:copilot:description': 'The RDS instance for the database.'
+    Type: AWS::RDS::DBInstance
+    Properties:
+      MasterUsername:
+        !Join [ "",  [ '{{resolve:secretsmanager:', !Ref greeklyapiRDSSecret, ":SecretString:username}}" ]]
+      MasterUserPassword:
+        !Join [ "",  [ '{{resolve:secretsmanager:', !Ref greeklyapiRDSSecret, ":SecretString:password}}" ]]
+      Engine: postgres
+      EngineVersion: '14.2'
+      DBName: !Ref greeklyapiDBName
+      AllocatedStorage: !FindInMap [ Rds, Storage, !Ref Env]
+      DBInstanceClass: !FindInMap [ Rds, InstanceClass, !Ref Env]
+      DBInstanceIdentifier: !Ref Name
+      Tags:
+        - Key: Name
+          Value: !Ref Name
+        - Key: Environment
+          Value: !Ref Env
+        - Key: Application
+          Value: !Ref App
+      DBSubnetGroupName: !Ref greeklyapiDBSubnetGroup
+      VPCSecurityGroups:
+        - !Ref greeklyapiDBSecurityGroup
+
+  greeklyapiSecretRDSInstanceAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref greeklyapiRDSSecret
+      TargetId: !Ref GreeklyDBInstance
+      TargetType: AWS::RDS::DBInstance
+
+Outputs:
+  greeklyapiRdsSecret: # injected as GREEKLYAPIRDS_SECRET environment variable by Copilot.
+    Description: "The JSON secret that holds the database username and password. Fields are 'host', 'port', 'dbname', 'username', 'password', 'dbClusterIdentifier' and 'engine'"
+    Value: !Ref greeklyapiRDSSecret
+  greeklyapiSecurityGroup:
+    Description: "The security group to attach to the workload."
+    Value: !Ref greeklyapiSecurityGroup

@@ -5,7 +5,7 @@ class Config:
     DEBUG = False
     DEVELOPMENT = False
     SECRET_KEY = os.getenv("SECRET_KEY", "this-is-the-default-key")
-    GREEKLY_DB_SECRET = json.loads(os.getenv('GREEKLYAPICLUSTER_SECRET', '{}'))
+    GREEKLY_DB_SECRET = json.loads(os.getenv('GREEKLYAPI_RDS_SECRET', '{}'))
     DB_USER = GREEKLY_DB_SECRET.get('username')
     DB_PASSWORD = GREEKLY_DB_SECRET.get('password')
     DB_HOST = GREEKLY_DB_SECRET.get('host')

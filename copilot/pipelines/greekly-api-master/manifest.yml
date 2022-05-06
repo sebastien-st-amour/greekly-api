@@ -1,9 +1,9 @@
-# The manifest for the "pipeline-greekly-greekly-api" pipeline.
+# The manifest for the "greekly-api-master" pipeline.
 # This YAML file defines your pipeline: the source repository it tracks and the order of the environments to deploy to.
 # For more info: https://aws.github.io/copilot-cli/docs/manifest/pipeline/
 
 # The name of the pipeline.
-name: pipeline-greekly-greekly-api
+name: greekly-api-master
 
 # The version of the schema used in this template.
 version: 1
@@ -24,23 +24,13 @@ source:
 stages:
     - # The name of the environment.
       name: test
-      test_commands:
-        - yum update -y && yum install -y sudo
-        - wget https://ecs-cli-v2-release.s3.amazonaws.com/copilot-linux-v1.12.0 
-        - mv ./copilot-linux-v1.12.0 ./copilot-linux       
-        - chmod +x ./copilot-linux        
-        - ./copilot-linux svc exec -c "flask db upgrade" -a greekly -n greekly-api -e test --yes
-      
-    - 
-      name: prod
-      requires_approval: true
-      test_commands:
-        - yum update -y && yum install -y sudo
-        - wget https://ecs-cli-v2-release.s3.amazonaws.com/copilot-linux-v1.12.0 
-        - mv ./copilot-linux-v1.12.0 ./copilot-linux       
-        - chmod +x ./copilot-linux        
-        - ./copilot-linux svc exec -c "flask db upgrade" -a greekly -n greekly-api -e prod --yes
+      # Optional: flag for manual approval action before deployment.
+      # requires_approval: true
+      # Optional: use test commands to validate this stage of your build.
+      # test_commands: [echo 'running tests', make test]
 
+    - # The name of the environment.
+      name: prod
       # Optional: flag for manual approval action before deployment.
       # requires_approval: true
       # Optional: use test commands to validate this stage of your build.
