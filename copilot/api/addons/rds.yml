@@ -21,6 +21,9 @@ Mappings:
     Storage:
       test: 10
       prod: 10
+    DBInstanceIdentifier:
+      test: greekly-test-rds
+      prod: greekly-prod-rds
 
 Resources:
 
@@ -87,7 +90,7 @@ Resources:
       DBName: !Ref greeklyapiDBName
       AllocatedStorage: !FindInMap [ Rds, Storage, !Ref Env]
       DBInstanceClass: !FindInMap [ Rds, InstanceClass, !Ref Env]
-      DBInstanceIdentifier: !Ref Name
+      DBInstanceIdentifier: !FindInMap [ Rds, DBInstanceIdentifier, !Ref Env]
       Tags:
         - Key: Name
           Value: !Ref Name

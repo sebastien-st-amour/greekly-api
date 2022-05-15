@@ -6,6 +6,7 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
   vim \
+  jq \
   postgresql-client \
   && rm -rf /var/lib/apt/lists/*
 
