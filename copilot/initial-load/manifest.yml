@@ -33,12 +33,12 @@ environments:
     variables:
       TOKEN_PATH: /home/questrade/.questrade.json
       LOG_LEVEL: debug
-  # prod:
-  #   on:
-  #     schedule: "*/15 14-22 * * MON-FRI"
-  #   variables:
-  #     TOKEN_PATH: /home/questrade/.questrade.json
-  #     LOG_LEVEL: info
+  prod:
+    on:
+      schedule: "*/15 14-22 * * MON-FRI"
+    variables:
+      TOKEN_PATH: /home/questrade/.questrade.json
+      LOG_LEVEL: info
   #   storage:
   #     volumes:
   #       questrade:
