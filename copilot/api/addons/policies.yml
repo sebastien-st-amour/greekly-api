@@ -8,23 +8,23 @@ Parameters:
   Name:
     Type: String
     Description: The name of the service, job, or workflow being deployed.
+
 Resources:
-  
-  greeklyS3tokenDownloadPolicy:
+  greeklyGrantAccessEFS:
     Metadata:
-      'aws:copilot:description': 'An IAM ManagedPolicy for your service to download files from S3'
+      'aws:copilot:description': 'An IAM ManagedPolicy for your service to mount and write to EFS.'
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      Description: Grants read access to the S3 bucket
+      Description: Grants write and mount access to EFS
       PolicyDocument:
         Version: 2012-10-17
         Statement:
             Effect: Allow
             Action:
-              - s3:GetObject
+              - 'elasticfilesystem:ClientMount'
+              - 'elasticfilesystem:ClientWrite'
             Resource: "*"
-
 Outputs:
-  greeklyS3tokenDownloadPolicy:
+  greeklyGrantAccessEFS:
     Description: "The IAM::ManagedPolicy to attach to the task role"
-    Value: !Ref greeklyS3tokenDownloadPolicy
+    Value: !Ref greeklyGrantAccessEFS

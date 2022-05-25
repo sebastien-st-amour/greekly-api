@@ -36,6 +36,16 @@ environments:
   test:
     variables:
       GREEKLY_APP_CONFIG: config.StagingConfig
+    storage:
+      volumes:
+        questrade:
+          path: /home/questrade
+          read_only: false
+          efs:
+            id: fs-0d77cb32a5a4541b6
+            auth:
+              iam: true
+              access_point_id: fsap-0201e23b92e4a10f1
   prod:
     variables:
       GREEKLY_APP_CONFIG: config.ProductionConfig

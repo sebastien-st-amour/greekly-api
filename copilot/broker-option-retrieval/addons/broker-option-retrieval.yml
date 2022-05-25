@@ -9,6 +9,22 @@ Parameters:
     Type: String
     Description: The name of the service, job, or workflow being deployed.
 Resources:
+
+  greeklyGrantAccessEFS:
+    Metadata:
+      'aws:copilot:description': 'An IAM ManagedPolicy for your service to mount and write to EFS.'
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Grants write and mount access to EFS
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+            Effect: Allow
+            Action:
+              - 'elasticfilesystem:ClientMount'
+              - 'elasticfilesystem:ClientWrite'
+            Resource: "*"
+  
   brokeroptionretrievalBucket:
     Metadata:
       'aws:copilot:description': 'An Amazon S3 bucket to store and retrieve objects for broker-option-retrieval'
@@ -71,6 +87,10 @@ Resources:
             Resource: !Sub ${ brokeroptionretrievalBucket.Arn}
 
 Outputs:
+
+  greeklyGrantAccessEFS:
+    Description: "The IAM::ManagedPolicy to attach to the task role"
+    Value: !Ref greeklyGrantAccessEFS
   brokeroptionretrievalName:
     Description: "The name of a user-defined bucket."
     Value: !Ref brokeroptionretrievalBucket
