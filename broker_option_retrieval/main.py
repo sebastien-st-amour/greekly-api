@@ -6,6 +6,12 @@ import logging
 import json
 import boto3
 
+
+
+# TODO - instead of this listening pattern, treat it as an actual worker service.
+# Tasks should only be scaled up (from 0, even) if there are messages in the queue.
+# See https://github.com/aws/copilot-cli/issues/3376
+
 class SQSListener:
     
     def __init__(self, queue_url):
@@ -102,7 +108,9 @@ class SQSListener:
 
     def listen(self):
     
-        while True: self.__poll()
+        while True:
+            
+            self.__poll()
 
 listener = SQSListener(getenv('COPILOT_QUEUE_URI'))
 listener.listen()

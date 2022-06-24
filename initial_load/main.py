@@ -78,16 +78,16 @@ def main():
         insert_option_contracts(q, stock, greekly)
 
     # PUBLISH OPTION IDS TO SNS
-    # sql = 'SELECT broker_id FROM option_contracts WHERE expiration_date > CURRENT_DATE'
-    # client = boto3.client('sns', region_name='ca-central-1')
-    # arns = json.loads(getenv('COPILOT_SNS_TOPIC_ARNS'))
-    # topic_arn = arns.get("broker-option-ids")
+    sql = 'SELECT broker_id FROM option_contracts WHERE expiration_date > CURRENT_DATE'
+    client = boto3.client('sns', region_name='ca-central-1')
+    arns = json.loads(getenv('COPILOT_SNS_TOPIC_ARNS'))
+    topic_arn = arns.get("broker-option-ids")
 
-    # for chunk in pd.read_sql(sql, con=greekly_uri, chunksize=100):
+    for chunk in pd.read_sql(sql, con=greekly_uri, chunksize=100):
 
-    #     option_ids = chunk.broker_id.to_list()
-    #     client.publish(TopicArn=topic_arn, 
-    #                    Message=json.dumps(option_ids))
+        option_ids = chunk.broker_id.to_list()
+        client.publish(TopicArn=topic_arn, 
+                       Message=json.dumps(option_ids))
 
 if __name__ == '__main__':
     
