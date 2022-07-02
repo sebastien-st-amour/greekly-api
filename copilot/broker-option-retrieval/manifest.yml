@@ -26,16 +26,10 @@ publish:
   topics:
     - name: broker-option-responses
 
-# storage:
-#   volumes:
-#     questrade:
-#       efs: true
-#       path: /home/questrade
-#       read_only: false
 # Optional fields for more advanced use-cases.
-#
-# variables:                    # Pass environment variables as key value pairs.
-#   TOKEN_PATH: /home/questrade/.questrade.json
+
+variables:                    # Pass environment variables as key value pairs.
+  TOKEN_PATH: /home/questrade/.questrade.json
 
 #secrets:                      # Pass secrets from AWS Systems Manager (SSM) Parameter Store.
 #  GITHUB_TOKEN: GITHUB_TOKEN  # The key is the name of the environment variable, the value is the name of the SSM parameter.
@@ -47,6 +41,16 @@ environments:
       spot: 1
     variables:
       LOG_LEVEL: debug
+    storage:
+      volumes:
+        questrade:
+          path: /home/questrade
+          read_only: false
+          efs:
+            id: fs-0d77cb32a5a4541b6
+            auth:
+              iam: true
+              access_point_id: fsap-0201e23b92e4a10f1
   prod:
     count:
       spot: 1
